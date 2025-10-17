@@ -1,0 +1,12 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: clickhouse
+      host: localhost
+      port: 9000
+      user: default
+      password: ""
+      keepalives_idle: 0
+      search_path: default
+      sslmode: disable
