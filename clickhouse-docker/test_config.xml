@@ -8,27 +8,7 @@
         <server_index from_env="SERVER_INDEX" />
     </macros>
     <remote_servers replace="1">
-        <test_shard>
-            <shard>
-                <replica>
-                    <host>ch0</host>
-                    <port>9000</port>
-                </replica>
-            </shard>
-            <shard>
-                <replica>
-                    <host>ch1</host>
-                    <port>9000</port>
-                </replica>
-            </shard>
-            <shard>
-                <replica>
-                    <host>ch2</host>
-                    <port>9000</port>
-                </replica>
-            </shard>
-        </test_shard>
-        <test_replica>
+        <default>
             <shard>
                 <replica>
                     <host>ch0</host>
@@ -43,7 +23,7 @@
                     <port>9000</port>
                 </replica>
             </shard>
-        </test_replica>
+        </default>
     </remote_servers>
     <keeper_server>
         <tcp_port>9181</tcp_port>

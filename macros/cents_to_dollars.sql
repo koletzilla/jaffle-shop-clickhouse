@@ -19,3 +19,14 @@
 {% macro fabric__cents_to_dollars(column_name) %}
     cast({{ column_name }} / 100 as numeric(16,2))
 {% endmacro %}
+
+{% macro clickhouse__cents_to_dollars(column_name) %}
+    toDecimal64(
+        concat(
+            toString(intDiv({{ column_name }}, 100)), 
+            '.', 
+            leftPad(toString({{ column_name }} % 100), 2, '0')
+        ), 
+        2
+    )
+{% endmacro %}

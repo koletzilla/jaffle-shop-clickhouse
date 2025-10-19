@@ -64,7 +64,6 @@ Rename `profiles-cloud.yml` to `profiles.yml`.It should work without more change
 Set the environment variables:
 
 ```bash
-export DBT_SCHEMA="jaffle_shop"
 export DBT_HOST="my_cluster.my_region.clickhouse.com"
 export DBT_USER="default"
 export DBT_PASSWORD="my_password"
@@ -76,9 +75,4 @@ And test dbt can connect to ch:
 dbt debug
 ```
 
-### Build the project
-
-```bash
-dbt build
-
-
+### Go to original Readme and continue from [Load the data](README.md#-Load-the-data)

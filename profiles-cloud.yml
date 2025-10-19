@@ -3,11 +3,12 @@ default:
   outputs:
     dev:
       type: clickhouse
-      schema: "{{ DBT_SCHEMA }}"
-      host: "{{ DBT_HOST }}"
+      schema: jaffle_shop
+      host: "{{ env_var('DBT_HOST') }}"
       port: 8443
-      user: "{{ DBT_USER }}"
-      password: "{{ DBT_PASSWORD }}"
+      user: "{{ env_var('DBT_USER') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
       secure: True
+      cluster_mode: True
       custom_settings:
         select_sequential_consistency: 1
