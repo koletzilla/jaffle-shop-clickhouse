@@ -1,13 +1,15 @@
-# 🥪 The Jaffle Shop 🦘
+# 🥪 The Jaffle Shop (for ClickHouse) 🦘
 
-This is a sandbox project for exploring the basic functionality and latest features of dbt. It's based on a fictional restaurant called the Jaffle Shop that serves [jaffles](https://en.wikipedia.org/wiki/Pie_iron).
+This is a sandbox project for exploring the basic functionality and latest features of dbt with Clickhouse. It's based on the original dbt [jaffle shop project](https://github.com/dbt-labs/jaffle-shop).
 
-This README will guide you through setting up the project on dbt Cloud. Working through this example should give you a good sense of how dbt Cloud works and what's involved with setting up your own project. We'll also _optionally_ cover some intermediate topics like setting up Environments and Jobs in dbt Cloud, working with a larger dataset, and setting up pre-commit hooks if you'd like.
+We made specific changes to make it work with Clickhouse. We also introduced specific documentation to help you kickstart your ClickHouse project.
 
-> [!NOTE]
-> This project is geared towards folks learning dbt Cloud with a cloud warehouse. If you're brand new to dbt, we recommend starting with the [dbt Learn](https://learn.getdbt.com/) platform. It's a free, interactive way to learn dbt, and it's a great way to get started if you're new to the tool. If you just want to try dbt locally as quickly as possible without setting up a data warehouse check out [`jaffle_shop_duckdb`](https://github.com/dbt-labs/jaffle_shop_duckdb).
+You may still find some incompatibilities with Clickhouse. If you do, please open an issue in the GitHub repository. Also feel free to contribute:
+- Examples of interesting dbt resources that interact in an special way with ClickHouse.
+- Any good practice that you think should be explained.
+- Examples of workarounds needed to implement certain features.
+- Features listed in the `jaffle project` that may not be compatible with the current `dbt-clickhouse` adapter like references to dbt cloud.
 
-Ready to go? Grab some water and a nice snack, and let's dig in!
 
 <div>
  <a href="https://www.loom.com/share/a90b383eea594a0ea41e91af394b2811?t=0&sid=da832f06-c08e-43e7-acae-a2a3d8d191bd">
@@ -39,52 +41,74 @@ Ready to go? Grab some water and a nice snack, and let's dig in!
 
 ## 💾 Prerequisites
 
-- A dbt Cloud account
-- A data warehouse (BigQuery, Snowflake, Redshift, Databricks, or Postgres) with adequate permissions to create a fresh database for this project and run dbt in it
-- _Optional_ Python 3.9 or higher (for generating synthetic data with `jafgen`)
-
-## 📓 Create new repo from template
-
-1. <details>
-   <summary>Click the green "Use this template" button at the top of the page to create a new repository from this template.</summary>
-
-   ![Click 'Use this template'](/.github/static/use-template.gif)
-   </details>
-
-2. Follow the steps to create a new repository. You can choose to only copy the `main` branch for simplicity, or take advantage of the Write-Audit-Publish (WAP) flow we use to maintain the project and copy all branches (which will include `main` and `staging` along with any active feature branches). Either option is fine!
-
-> [!TIP]
-> In a setup that follows a WAP flow, you have a `main` branch that serves production data (like downstream dashboards) and is tied to a Production Environment in dbt Cloud, and a `staging` branch that serves a clone of that data and is tied to a Staging Environment in dbt Cloud. You then branch off of `staging` to add new features or fix bugs, and merge back into `staging` when you're done. When you're ready to deploy to production, you merge `staging` into `main`. Staging is meant to be more-or-less a mirror of production, but safe to test breaking changes, so you can verify changes in a production-like environment before deploying them fully. You _write_ to `staging`, _audit_ in `staging`, and _publish_ to `main`.
+- Python version between 3.9 to 3.12 (>=3.11 recommended)
+- Access to a ClickHouse cluster. For example:
+    - A cloud cluster (using ClickHouse Cloud)
+    - A local cluster (using docker)
 
 ## 🏗️ Platform setup
 
-1. Create a logical database in your data warehouse for the Jaffle Shop project. We recommend using the name `jaffle_shop` for consistency with the project. This looks different on different platforms (for instance on BigQuery this constitutes creating a new _project_, on Snowflake this is achieved via `create database jaffle_shop;`, and if you're running Postgres locally you can probably skip this). If you're not sure how to do this, we recommend checking out the [Quickstart Guide for your data platform in the dbt Docs](https://docs.getdbt.com/guides).
+### Installing dbt
 
-2. Set up a dbt Cloud account (if you don't have one already, if you do, just create a new project) and follow Step 4 in the [Quickstart Guide for your data platform](https://docs.getdbt.com/guides), to connect your platform to dbt Cloud. Make sure the user you configure for your connections has [adequate database permissions to run dbt](https://docs.getdbt.com/reference/database-permissions/about-database-permissions) in the `jaffle_shop` database.
+Create a local Python environment and activate it:
 
-3. Choose the repo you created in Step 1 of the **Create new repo from template** section as the repository for your dbt Project's codebase.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-<img width="500" alt="Repo selection in dbt Cloud" src="https://github.com/dbt-labs/jaffle-shop/assets/91998347/daac5bbc-097c-4d57-9628-0c85d348e4a4">
+Install dbt and dbt-clickhouse locally:
 
-### 🏁 Checkpoint
+```bash
+pip install dbt-core dbt-clickhouse
+```
 
-The following should now be done:
+Install dbt-dependencies
+```bash
+dbt deps
+```
 
-- dbt Cloud connected to your warehouse
-- Your copy of this repo set up as the codebase
-- dbt Cloud and the codebase pointed at a fresh database or project in your warehouse to work in
+### Configuring a ClickHouse cluster
 
-You're now ready to start developing with dbt Cloud! Choose a path below (either the [dbt Cloud IDE](<#dbt-cloud-ide-(most-beginner-friendly)>) or the [Cloud CLI](<#dbt-cloud-cli-(if-you-prefer-to-work-locally)>) to get started.
+#### Local cluster (using docker)
 
-### 😶‍🌫️ dbt Cloud IDE (most beginner friendly)
+Start a local ClickHouse cluster locally by using docker:
 
-1. Click `Develop` in the dbt Cloud nav bar. You should be prompted to run a `dbt deps`, which you should do. This will install the dbt packages configured in the `packages.yml` file.
+```bash
+./clickhouse-docker/start_ch_cluster.sh
+```
 
-### 💽 dbt Cloud CLI (if you prefer to work locally)
+Rename `profiles-local.yml` to `profiles.yml`. It should work without more changes.
 
-1. Run `git clone [new repo git link]` (or `gh repo clone [repo owner]/[new repo name]` if you prefer GitHub's excellent CLI) to clone your new repo from the first step of the **Create new repo from template** section to your local machine.
+And test dbt can connect to ch:
 
-2. [Follow the steps on this page](https://cloud.getdbt.com/cloud-cli) to install and set up a dbt Cloud connection with the dbt Cloud CLI.
+```bash
+dbt debug
+```
+
+You can later stop the cluster by using:
+
+```bash
+./clickhouse-docker/stop_ch_cluster.sh
+```
+
+#### Cloud cluster (using ClickHouse Cloud)
+
+Rename `profiles-cloud.yml` to `profiles.yml`.It should work without more changes.
+
+Set the environment variables:
+
+```bash
+export DBT_HOST="my_cluster.my_region.clickhouse.com"
+export DBT_USER="default"
+export DBT_PASSWORD="my_password"
+```
+
+And test dbt can connect to ch:
+
+```bash
+dbt debug
+```
 
 ### 📊 Load the data
 
