@@ -33,3 +33,8 @@ models:
 
 flags:
   require_generic_test_arguments_property: true
+
+quoting:
+  database: false
+  schema: false
+  identifier: false
